@@ -24,6 +24,7 @@ class AgenteController {
             await this.agenteModel.createAgente(agente);
             res.send({
                 message: 'Agente created',
+                id: agente._id,
             });
 
         } catch (error) {

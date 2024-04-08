@@ -1,5 +1,5 @@
 import express from "express";
-import agenteRouter from "./routes/agenteRouter.js";
+import agenteRouter from "./routes/AgenteRouter.js";
 
 const Server = express();
 Server.use(express.json());
