@@ -1,23 +1,13 @@
-import { error } from 'console';
-import Agente from '../models/AgenteModel.js';
+import AgenteModel from '../models/AgenteModel.js';
+import AgenteSchema from '../types/Agente.js';
 import Logger from '../utils/logs.js';
+import { hash } from 'bcrypt';
+
 const log = new Logger();
 
 function validation(req) {
     const val = req;
-    //generate a code to see the size of val    
-
-    let size;
-    if (Array.isArray(val) || typeof val === 'string') {
-        size = val.length;
-    } else if (typeof val === 'object' && val !== null) {
-        size = Object.keys(val).length;
-    } else {
-        size = undefined;
-    }
-    console.log(size);
-
-    if (!val.nome || !val.email || !val.telefone || !val.cargo || size < 4 || size > 4) {
+    if (!val.name || !val.email || !val.password || !val.phone || !val.role) {
         return false;
     }
     return true;
@@ -25,12 +15,12 @@ function validation(req) {
 class AgenteController {
     agenteModel;
     constructor() {
-        this.agenteModel = new Agente();
+        this.agenteModel = new AgenteModel();
     }
     createAgente = async (req, res) => {
 
         try {
-            const agente = req.body;
+            const agente = new AgenteSchema(req.body);
             if (!agente) {
                 log.error('User object is empty');
                 res.status(500).send({
@@ -46,7 +36,14 @@ class AgenteController {
                 });
                 return;
             };
-
+            if (await this.agenteModel.searchAgente(agente.email)) {
+                log.error('Email already exists');
+                res.status(500).send({
+                    message: 'Email already exists',
+                });
+                return;
+            }
+            agente.password = await hash(agente.password, 10);
             await this.agenteModel.createAgente(agente);
             res.send({
                 message: 'Agente created',
@@ -140,15 +137,30 @@ class AgenteController {
         }
     }
 
-    teste(req, res) {
+    searchAgente = async (req, res) => {
         try {
-            log.info('Teste');
-            res.send('Teste');
+            const search = req.body.search;
+            const result = await this.agenteModel.searchAgente(search);
+            res.send(result);
 
         } catch (error) {
-            log.error(`Error creating teste: ${error}`);
+            log.error(`Error searching agente: ${error}`);
             res.status(500).send({
-                message: 'Error creating teste',
+                message: 'Error searching agente',
+            });
+        }
+    }
+    deleteAll = async (req, res) => {
+        try {
+            await this.agenteModel.deleteAll();
+            res.send({
+                message: 'All agentes deleted',
+            });
+
+        } catch (error) {
+            log.error(`Error deleting all agentes: ${error}`);
+            res.status(500).send({
+                message: 'Error deleting all agentes',
             });
         }
     }

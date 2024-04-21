@@ -1,88 +1,118 @@
 import Database from '../configs/Database.js';
 import Logger from '../utils/logs.js';
-import { MongoClient, ObjectId } from 'mongodb';
+import dotenv from 'dotenv';
+import { MongoClient, ObjectId, Collection } from 'mongodb';
 
+dotenv.config();
 const log = new Logger();
 
 class AgenteModel {
-     client = new MongoClient('mongodb+srv://guilhermerodrigues1921:TGDjA74OzprSDNN5@sandman.2yvfxex.mongodb.net/', {useNewUrlParser: true, useUnifiedTopology: true});
-     collection;
-     database;
-     collectionName;
-   
+    client = new MongoClient(process.env.MONGODB_URL);
+    collection = Collection;
+    database = process.env.MONGODB_DATABASE;
+    collectionName = 'Agentes';
+
     constructor() {
-        this.client = new Database().getClient();
+        this.client = Database.getInstance().getClient();
         log.success('Agente Class init');
     }
 
     connectToCollection = async () => {
-        try{
+        try {
             this.client = await this.client.connect();
-           log.info('Connected to MongoDB Atlas');
-
-            if(!this.collection){
-                this.collection = this.client.db(this.database).collection('Agentes');
-            this.collection.createIndex({cpf: 1}, {unique: true});
-            log.info('Connected to collection');
+            if (!this.collection) {
+                this.collection = this.client.db(this.database).collection(this.collectionName);
+                this.collection.createIndex({ email: 1 }, { unique: true });
             }
+            log.info('Connected to MongoDB Atlas');
+
         } catch (error) {
             log.error(`Error connecting to collection: ${error}`);
             throw error;
         }
-        try{
-            this.collection = this.client.db('sandman_db').collection('agentes');
-            log.success('Connected to collection');
+        try {
+            this.collection = this.client.db('sandman_db').collection('Agentes');
+            log.success('Connected to collection: Agentes');
         }
-        catch(error){
+        catch (error) {
             log.error(`Error connecting to collection: ${error}`);
             throw error;
         }
     }
     createAgente = async (agente) => {
-        try{
+        try {
             await this.connectToCollection();
             await this.collection.insertOne(agente);
             log.success('Agente inserted');
         }
-        catch(error){
+        catch (error) {
             log.error(`Error inserting agente: ${error}`);
             throw error;
         }
     }
     readAgente = async (id) => {
-        try{
+        try {
             await this.connectToCollection();
             const result = await this.collection.find({ _id: new ObjectId(id) }).toArray();
             log.success('Agente found');
             return result;
         }
-        catch(error){
+        catch (error) {
             log.error(`Error finding agente: ${error}`);
             throw error;
         }
     }
     updateAgente = async (id, agente) => {
-        try{
+        try {
             await this.connectToCollection();
             await this.collection.updateOne({ _id: new ObjectId(id) }, { $set: agente });
             log.success('Agente updated');
         }
-        catch(error){
+        catch (error) {
             log.error(`Error updating agente: ${error}`);
             throw error;
         }
     }
     deleteAgente = async (id) => {
-        try{
+        try {
             await this.connectToCollection();
             await this.collection.deleteOne({ _id: new ObjectId(id) });
             log.success('Agente deleted');
         }
-        catch(error){
+        catch (error) {
             log.error(`Error deleting agente: ${error}`);
             throw error;
         }
     }
+
+    searchAgente = async (search) => {
+        try {
+            await this.connectToCollection();
+            const result = await this.collection.find({ $or: [{ name: search }, { email: search }, { phone: search }] }).toArray();
+            if (result.length === 0) {
+                log.error('Agente not found');
+                return;
+            }
+            log.success('Agente found');
+            return result;
+        }
+        catch (error) {
+            log.error(`Error finding agente: ${error}`);
+            throw error;
+        }
+    }
+    deleteAll = async () => {
+        try {
+            await this.connectToCollection();
+            await this.collection.deleteMany();
+            log.success('All agentes deleted');
+        }
+        catch (error) {
+            log.error(`Error deleting all agentes: ${error}`);
+            throw error;
+        }
+    }
+
 }
 
 export default AgenteModel;
