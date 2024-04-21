@@ -20,7 +20,7 @@ const agenteSchema = new mongoose.Schema({
         required: true,
     },
     role:{
-        type: String,
+        type: Boolean,
         required: true,
     },
     created_at:{

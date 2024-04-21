@@ -112,6 +112,21 @@ class AgenteModel {
             throw error;
         }
     }
+    
+    verifyEmail = async (email) => {
+        try {
+            await this.connectToCollection();
+            const result = await this.collection.find({ email: email }).toArray();
+            if (result.length === 0) {
+                return false;
+            }
+            return true;
+        }
+        catch (error) {
+            log.error(`Error finding email: ${error}`);
+            throw error;
+        }
+    }
 
 }
 

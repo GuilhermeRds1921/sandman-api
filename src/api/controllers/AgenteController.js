@@ -7,19 +7,31 @@ const log = new Logger();
 
 function validation(req) {
     const val = req;
-    if (!val.name || !val.email || !val.password || !val.phone || !val.role) {
+    if (!val.name || !val.email || !val.password || !val.phone) {
+        return false;
+    }
+    if (typeof val.role !== 'boolean') {
         return false;
     }
     return true;
 }
+
 class AgenteController {
     agenteModel;
     constructor() {
         this.agenteModel = new AgenteModel();
     }
+
     createAgente = async (req, res) => {
 
         try {
+            if (!validation(req.body)) {
+                log.error('Invalid data');
+                res.status(500).send({
+                    message: 'Invalid data',
+                });
+                return;
+            };
             const agente = new AgenteSchema(req.body);
             if (!agente) {
                 log.error('User object is empty');
@@ -29,20 +41,15 @@ class AgenteController {
                 return;
             }
 
-            if (!validation(agente)) {
-                log.error('Invalid data');
-                res.status(500).send({
-                    message: 'Invalid data',
-                });
-                return;
-            };
-            if (await this.agenteModel.searchAgente(agente.email)) {
+
+            if (await this.agenteModel.verifyEmail(agente.email)) {
                 log.error('Email already exists');
                 res.status(500).send({
                     message: 'Email already exists',
                 });
                 return;
             }
+
             agente.password = await hash(agente.password, 10);
             await this.agenteModel.createAgente(agente);
             res.send({
@@ -164,5 +171,6 @@ class AgenteController {
             });
         }
     }
+
 }
 export default AgenteController;
