@@ -8,7 +8,7 @@ const log = new Logger();
 
 function validation(req) {
     const val = req;
-    if (!val.nome || !val.email || !val.cpf || !val.telefone || !val.cns || !val.comorbidades) {
+    if (!val.name || !val.email || !val.cpf || !val.phone || !val.cns ) {
         return false;
     }
     return true;
