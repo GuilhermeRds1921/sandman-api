@@ -73,7 +73,7 @@ class PacienteModel{
             throw error;
         }
     }
-    deletePacinte = async (id) => {
+    deletePaciente = async (id) => {
         try {
             await this.connectToCollection();
             await this.collection.deleteOne({ _id: new ObjectId(id) });
@@ -84,50 +84,6 @@ class PacienteModel{
             throw error;
         }
     }
-
-    searchPaciente = async (search) => {
-        try {
-            await this.connectToCollection();
-            const result = await this.collection.find({ $or: [{ name: search }, { email: search }, { phone: search }] }).toArray();
-            if (result.length === 0) {
-                log.error('Paciente not found');
-                return;
-            }
-            log.success('Paciente found');
-            return result;
-        }
-        catch (error) {
-            log.error(`Error finding paciente: ${error}`);
-            throw error;
-        }
-    }
-    deleteAll = async () => {
-        try {
-            await this.connectToCollection();
-            await this.collection.deleteMany();
-            log.success('All paciente deleted');
-        }
-        catch (error) {
-            log.error(`Error deleting all pacientes: ${error}`);
-            throw error;
-        }
-    }
-    
-    verifyEmail = async (email) => {
-        try {
-            await this.connectToCollection();
-            const result = await this.collection.find({ email: email }).toArray();
-            if (result.length === 0) {
-                return false;
-            }
-            return true;
-        }
-        catch (error) {
-            log.error(`Error finding email: ${error}`);
-            throw error;
-        }
-    }
-
 }
 
 export default PacienteModel;

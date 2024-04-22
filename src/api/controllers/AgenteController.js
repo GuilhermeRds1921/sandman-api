@@ -7,7 +7,7 @@ const log = new Logger();
 
 function validation(req) {
     const val = req;
-    if (!val.name || !val.email || !val.password || !val.phone) {
+    if (!val.name || !val.email || !val.password || !val.phone || !val.cdenf || !val.user) {
         return false;
     }
 
