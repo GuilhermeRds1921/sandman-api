@@ -15,9 +15,8 @@ function validation(req) {
     } else {
         size = undefined;
     }
-    console.log(size);
 
-    if (!val.nome || !val.email || !val.telefone || !val.cargo || size < 4 || size > 4) {
+    if (!val.nome || !val.email || !val.usuario || !val.cargo || !val.cdenf || size < 6 || size > 6) {
         return false;
     }
     return true;
