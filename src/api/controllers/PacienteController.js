@@ -61,7 +61,7 @@ class PacienteController {
                 console.log("Paciente object is empty");
             }
 
-            await PacienteModel.updatePaciente(paciente);
+            await this.PacienteModel.updatePaciente(id,paciente);
             res.send({
                 message: 'Paciente updated',
                 id: paciente._id,
@@ -82,7 +82,7 @@ class PacienteController {
                 res.status(500).send({message: 'Id is empty'});
             }
 
-            const result = await PacienteModel.readPaciente(id);
+            const result = await this.PacienteModel.readPaciente(id);
             res.send(result);
 
         }catch(error){
@@ -100,7 +100,7 @@ class PacienteController {
                 res.status(500).send({message: 'Id is empty'});
             }
 
-            await PacienteModel.deletePaciente(id);
+            await this.PacienteModel.deletePaciente(id);
             res.send({message: 'Paciente deleted'});
 
         }catch(error){
