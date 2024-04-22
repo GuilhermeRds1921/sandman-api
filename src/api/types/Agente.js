@@ -1,9 +1,35 @@
-// import { ObjectId } from 'mongoose';
+import mongoose from "mongoose";
 
-// export type Agente = {
-//     _id: ObjectId;
-//     nome: string;
-//     email: string;
-//     telefone: string;
-//     cargo: boolean;
-// }
+const agenteSchema = new mongoose.Schema({  
+    id: mongoose.Schema.Types.ObjectId,
+    name:{
+        type: String,
+        required: true,
+    },
+    email:{
+        type: String,
+        required: true,
+        unique: true,
+    },
+    password:{
+        type: String,
+        required: true,
+    },
+    phone:{
+        type: String,
+        required: true,
+    },
+    role:{
+        type: Boolean,
+        required: true,
+    },
+    created_at:{
+        type: Date,
+        default: Date.now,
+    },
+    updated_at:{
+        type: Date,
+        default: Date.now,
+    },
+});
+export default mongoose.model("Agente", agenteSchema);
