@@ -8,7 +8,6 @@ agenteRouter.post('/create', agenteController.createAgente);
 agenteRouter.put('/update/:id', agenteController.updateAgente);
 agenteRouter.delete('/delete/:id', agenteController.deleteAgente);
 agenteRouter.get('/read/:id', agenteController.readAgente);
-
 agenteRouter.get('/search', agenteController.searchAgente);
 agenteRouter.delete('/deleteAll', agenteController.deleteAll);
 

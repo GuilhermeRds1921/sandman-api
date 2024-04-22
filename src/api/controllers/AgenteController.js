@@ -10,6 +10,7 @@ function validation(req) {
     if (!val.name || !val.email || !val.password || !val.phone) {
         return false;
     }
+
     if (typeof val.role !== 'boolean') {
         return false;
     }
