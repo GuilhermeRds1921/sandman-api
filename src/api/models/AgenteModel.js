@@ -128,6 +128,21 @@ class AgenteModel {
         }
     }
 
+    updtateEmail = async (email, id) => {
+        try {
+            await this.connectToCollection();
+            const result = await this.collection.find({ email: email }).toArray();
+            if (result.id == id) {
+                return true;
+            }
+            return false;
+        }
+        catch (error) {
+            log.error(`Error finding email: ${error}`);
+            throw error;
+        } 
+    }
+
 }
 
 export default AgenteModel;

@@ -41,8 +41,7 @@ class AgenteController {
                 });
                 return;
             }
-
-
+            
             if (await this.agenteModel.verifyEmail(agente.email)) {
                 log.error('Email already exists');
                 res.status(500).send({
@@ -115,6 +114,14 @@ class AgenteController {
                 });
                 return;
             };
+
+            if (await this.agenteModel.updtateEmail(agente.email, agente.id)) {
+                log.error('Email already exists');
+                res.status(500).send({
+                    message: 'Email already exists',
+                });w
+                return;
+            }
 
             await this.agenteModel.updateAgente(id, agente);
             res.send({
