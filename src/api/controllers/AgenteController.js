@@ -7,7 +7,7 @@ const log = new Logger();
 
 function validation(req) {
     const val = req;
-    if (!val.name || !val.email || !val.password || !val.phone || !val.cdenf || !val.user) {
+    if (!val.name || !val.email || !val.password || !val.cdenf) {
         return false;
     }
 
@@ -107,6 +107,14 @@ class AgenteController {
                 });
                 return;
             }
+
+            if (!validation(req.body)) {
+                log.error('Invalid data');
+                res.status(500).send({
+                    message: 'Invalid data',
+                });
+                return;
+            };
 
             await this.agenteModel.updateAgente(id, agente);
             res.send({
