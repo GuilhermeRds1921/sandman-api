@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import { type } from "os";
 
-const agenteSchema = new mongoose.Schema({  
+const pacienteSchema = new mongoose.Schema({  
     id: mongoose.Schema.Types.ObjectId,
     name:{
         type: String,
@@ -12,15 +12,7 @@ const agenteSchema = new mongoose.Schema({
         required: true,
         unique: true,
     },
-    cdenf:{
-        type: String,
-        required: true,
-    },
-    user:{
-        type: String,
-        required: true,
-    },
-    password:{
+    cpf:{
         type: String,
         required: true,
     },
@@ -28,8 +20,12 @@ const agenteSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    role:{
-        type: Boolean,
+    cns:{
+        type: String,
+        required: true,
+    },
+    Comorbidities:{
+        type: String,
         required: true,
     },
     created_at:{
@@ -40,5 +36,6 @@ const agenteSchema = new mongoose.Schema({
         type: Date,
         default: Date.now,
     },
+
 });
-export default mongoose.model("Agente", agenteSchema);
+export default mongoose.model("Paciente", pacienteSchema);
