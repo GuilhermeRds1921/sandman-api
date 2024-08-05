@@ -1,9 +1,8 @@
 import mongoose from "mongoose";
-import { type } from "os";
 
 const agenteSchema = new mongoose.Schema({  
     id: mongoose.Schema.Types.ObjectId,
-    name:{
+    nome:{
         type: String,
         required: true,
     },
@@ -16,19 +15,15 @@ const agenteSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    user:{
+    senha:{
         type: String,
         required: true,
     },
-    password:{
+    telefone:{
         type: String,
         required: true,
     },
-    phone:{
-        type: String,
-        required: true,
-    },
-    role:{
+    administrador:{
         type: Boolean,
         required: true,
     },

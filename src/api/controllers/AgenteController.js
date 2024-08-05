@@ -7,11 +7,11 @@ const log = new Logger();
 
 function validation(req) {
     const val = req;
-    if (!val.name || !val.email || !val.password || !val.phone || !val.cdenf || !val.user) {
+    if (!val.nome || !val.email || !val.senha || !val.telefone || !val.cdenf) {
         return false;
     }
 
-    if (typeof val.role !== 'boolean') {
+    if (typeof val.administrador !== 'boolean') {
         return false;
     }
     return true;
@@ -28,6 +28,7 @@ class AgenteController {
         try {
             if (!validation(req.body)) {
                 log.error('Invalid data');
+                console.log(req.body);
                 res.status(500).send({
                     message: 'Invalid data',
                 });
@@ -51,7 +52,7 @@ class AgenteController {
                 return;
             }
 
-            agente.password = await hash(agente.password, 10);
+            agente.senha = await hash(agente.senha, 10);
             await this.agenteModel.createAgente(agente);
             res.send({
                 message: 'Agente created',
