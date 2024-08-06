@@ -1,7 +1,9 @@
+import { compare } from 'bcrypt';
 import Database from '../configs/Database.js';
 import Logger from '../utils/logs.js';
 import dotenv from 'dotenv';
 import { MongoClient, ObjectId, Collection } from 'mongodb';
+import { query } from 'express';
 
 dotenv.config();
 const log = new Logger();
@@ -81,6 +83,55 @@ class PacienteModel{
         }
         catch (error) {
             log.error(`Error deleting paciente: ${error}`);
+            throw error;
+        }
+    }
+    deleteAll = async () => {
+        try {
+            await this.connectToCollection();
+            await this.collection.deleteMany();
+            log.success('All pacientes deleted');
+        }
+        catch (error) {
+            log.error(`Error deleting all pacientes: ${error}`);
+            throw error;
+        }
+    }
+    verifyEmail = async (email, id) => {
+        try {
+            await this.connectToCollection();
+            const result = await this.collection.find({ email: email }).toArray();
+
+            console.log(result);
+            const i = 0;
+            if (result.length === 0) {
+                return false;
+            }
+            
+            if(result[0]._id == id){
+                return false; 
+            }
+
+            return true;
+        }
+        catch (error) {
+            log.error(`Error finding email: ${error}`);
+            throw error;
+        }
+    }
+    searchPaciente = async (search) => {
+        try {
+            await this.connectToCollection();
+            const result = await this.collection.find({ $or: [{ name: search }, { email: search }, { phone: search }] }).toArray();
+            if (result.length === 0) {
+                log.error('Paciente not found');
+                return;
+            }
+            log.success('Paciente found');
+            return result;
+        }
+        catch (error) {
+            log.error(`Error finding paciente: ${error}`);
             throw error;
         }
     }

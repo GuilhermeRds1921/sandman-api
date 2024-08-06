@@ -113,13 +113,21 @@ class AgenteModel {
         }
     }
     
-    verifyEmail = async (email) => {
+    verifyEmail = async (email, id) => {
         try {
             await this.connectToCollection();
             const result = await this.collection.find({ email: email }).toArray();
+
+            console.log(result);
+            const i = 0;
             if (result.length === 0) {
                 return false;
             }
+            
+            if(result[0]._id == id){
+                return false; 
+            }
+            
             return true;
         }
         catch (error) {
@@ -127,22 +135,6 @@ class AgenteModel {
             throw error;
         }
     }
-
-    updtateEmail = async (email, id) => {
-        try {
-            await this.connectToCollection();
-            const result = await this.collection.find({ email: email }).toArray();
-            if (result.id == id) {
-                return true;
-            }
-            return false;
-        }
-        catch (error) {
-            log.error(`Error finding email: ${error}`);
-            throw error;
-        } 
-    }
-
 }
 
 export default AgenteModel;

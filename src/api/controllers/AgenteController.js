@@ -26,6 +26,9 @@ class AgenteController {
     createAgente = async (req, res) => {
 
         try {
+
+            const agente = new AgenteSchema(req.body);
+
             if (!validation(req.body)) {
                 log.error('Invalid data');
                 res.status(500).send({
@@ -33,19 +36,19 @@ class AgenteController {
                 });
                 return;
             };
-            const agente = new AgenteSchema(req.body);
-            if (!agente) {
-                log.error('User object is empty');
-                res.status(500).send({
-                    message: 'User object is empty',
-                });
-                return;
-            }
-            
+
             if (await this.agenteModel.verifyEmail(agente.email)) {
                 log.error('Email already exists');
                 res.status(500).send({
                     message: 'Email already exists',
+                });
+                return;
+            }
+
+            if (!agente) {
+                log.error('User object is empty');
+                res.status(500).send({
+                    message: 'User object is empty',
                 });
                 return;
             }
@@ -115,11 +118,11 @@ class AgenteController {
                 return;
             };
 
-            if (await this.agenteModel.updtateEmail(agente.email, agente.id)) {
+            if (await this.agenteModel.verifyEmail(agente.email)) {
                 log.error('Email already exists');
                 res.status(500).send({
                     message: 'Email already exists',
-                });w
+                });
                 return;
             }
 
