@@ -8,5 +8,7 @@ pacienteRouter.post('/create', pacienteController.createPaciente);
 pacienteRouter.put('/update/:id', pacienteController.updatePaciente);
 pacienteRouter.get('/read/:id', pacienteController.readPaciente);
 pacienteRouter.delete('/delete/:id', pacienteController.deletePaciente);
+pacienteRouter.delete('/deleteAll', pacienteController.deleteAll);
+pacienteRouter.get('/search', pacienteController.searchPaciente);
 
 export default  pacienteRouter;

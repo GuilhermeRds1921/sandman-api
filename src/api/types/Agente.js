@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { type } from "os";
 
 const agenteSchema = new mongoose.Schema({  
     id: mongoose.Schema.Types.ObjectId,

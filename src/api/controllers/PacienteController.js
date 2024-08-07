@@ -15,25 +15,34 @@ function validation(req) {
 }
 
 class PacienteController {
+    pacienteModel;
     constructor(){
-        this.PacienteModel = new PacienteModel();
+        this.pacienteModel = new PacienteModel();
     };
 
     createPaciente = async (req, res) => {
         try{
             const paciente = req.body;
 
+            if(!validation(req.body)){
+                log.error("Invalid data");
+                res.status(500).send({message: 'invalid data'});
+            }
+            
             if(!paciente){
                 log.error('User object is empty');
                 res.status(500).send({ message: 'User object is empty'});
             }
-
-            if(!validation){
-                log.error("Invalid data");
-                res.status(500).send({message: 'invalid data'});
+            
+            if (await this.pacienteModel.verifyEmail(paciente.email, paciente._id)) {
+                log.error('Email already exists');
+                res.status(500).send({
+                    message: 'Email already exists',
+                });
+                return;
             }
 
-            await this.PacienteModel.createPaciente(paciente);
+            await this.pacienteModel.createPaciente(paciente);
             res.send({
                 message: 'Paciente created',
                 id: paciente._id,
@@ -60,8 +69,22 @@ class PacienteController {
                 res.status(500).send({message: 'Paciente object is empty'});
                 console.log("Paciente object is empty");
             }
+            
+            if(!validation){
+                log.error("Invalid data");
+                res.status(500).send({message: 'invalid data'});
+            }
 
-            await this.PacienteModel.updatePaciente(id,paciente);
+            if (await this.pacienteModel.verifyEmail(paciente.email, paciente._id)) {
+                log.error('Email already exists');
+                res.status(500).send({
+                    message: 'Email already exists',
+                });
+                return;
+            }
+
+            await this.pacienteModel.updatePaciente(id,paciente);
+
             res.send({
                 message: 'Paciente updated',
                 id: paciente._id,
@@ -81,7 +104,6 @@ class PacienteController {
                 console.log("Id is empty");
                 res.status(500).send({message: 'Id is empty'});
             }
-
             const result = await this.PacienteModel.readPaciente(id);
             res.send(result);
 
@@ -100,12 +122,39 @@ class PacienteController {
                 res.status(500).send({message: 'Id is empty'});
             }
 
-            await this.PacienteModel.deletePaciente(id);
+            await this.pacienteModel.deletePaciente(id);
             res.send({message: 'Paciente deleted'});
 
         }catch(error){
             console.log(`Error delete paciente: ${error}`);
             res.status(500).send({message: 'Error delete paciente'})
+        }
+    }
+    deleteAll = async (req, res) => {
+        try {
+            await this.pacienteModel.deleteAll();
+            res.send({
+                message: 'All pacientes deleted',
+            });
+
+        } catch (error) {
+            log.error(`Error deleting all pacientes: ${error}`);
+            res.status(500).send({
+                message: 'Error deleting all pacientes',
+            });
+        }
+    }
+    searchPaciente = async (req, res) => {
+        try {
+            const search = req.body.search;
+            const result = await this.pacienteModel.searchPaciente(search);
+            res.send(result);
+
+        } catch (error) {
+            log.error(`Error searching paciente: ${error}`);
+            res.status(500).send({
+                message: 'Error searching paciente',
+            });
         }
     }
 }
