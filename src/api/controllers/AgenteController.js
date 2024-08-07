@@ -2,16 +2,19 @@ import AgenteModel from '../models/AgenteModel.js';
 import AgenteSchema from '../types/Agente.js';
 import Logger from '../utils/logs.js';
 import { hash } from 'bcrypt';
+import jwt from 'jsonwebtoken';
+import dotenv from 'dotenv';
 
+dotenv.config();
 const log = new Logger();
 
 function validation(req) {
     const val = req;
-    if (!val.name || !val.email || !val.password || !val.cdenf) {
+    if (!val.nome || !val.email || !val.senha || !val.telefone || !val.cdenf) {
         return false;
     }
 
-    if (typeof val.role !== 'boolean') {
+    if (typeof val.administrador !== 'boolean') {
         return false;
     }
     return true;
@@ -31,6 +34,7 @@ class AgenteController {
 
             if (!validation(req.body)) {
                 log.error('Invalid data');
+                console.log(req.body);
                 res.status(500).send({
                     message: 'Invalid data',
                 });
@@ -53,7 +57,7 @@ class AgenteController {
                 return;
             }
 
-            agente.password = await hash(agente.password, 10);
+            agente.senha = await hash(agente.senha, 10);
             await this.agenteModel.createAgente(agente);
             res.send({
                 message: 'Agente created',
@@ -187,6 +191,42 @@ class AgenteController {
             log.error(`Error deleting all agentes: ${error}`);
             res.status(500).send({
                 message: 'Error deleting all agentes',
+            });
+        }
+    }
+
+    login = async (req, res) => {
+        try {
+            const { email, senha } = req.body;
+
+            if (!email || !senha) {
+                log.error('Insufficient data');
+                res.status(500).send({
+                    message: 'Insufficient data',
+                });
+                return;
+            }
+
+            const result = await this.agenteModel.login(email, senha);
+            if (!result) {
+                log.error('Erro ao realizar Login');
+                res.status(500).send({
+                    message: 'Erro ao realizar Login',
+                });
+                return;
+            }
+            const secret = process.env.JWT_SECRET;
+            const token = jwt.sign({ id: result._id }, secret, { expiresIn: 86400 });
+
+            res.send({
+                message: "Analista logado",
+                token
+        });
+
+        } catch (error) {
+            log.error(`Error logging in: ${error}`);
+            res.status(500).send({
+                message: 'Error logging in',
             });
         }
     }

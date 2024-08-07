@@ -2,6 +2,7 @@ import Database from '../configs/Database.js';
 import Logger from '../utils/logs.js';
 import dotenv from 'dotenv';
 import { MongoClient, ObjectId, Collection } from 'mongodb';
+import bcrypt from 'bcrypt';
 
 dotenv.config();
 const log = new Logger();
@@ -135,6 +136,28 @@ class AgenteModel {
             throw error;
         }
     }
+    login = async (email, senha) => {
+        try {
+            await this.connectToCollection();
+            const user = await this.collection.findOne({ email: email})
+            if (!user) {
+                log.error('Email nao encontrado');
+                return;
+            }
+            const confSenha = await bcrypt.compare(senha, user.senha);
+            if (!confSenha) {
+                log.error('Senha incorreta');
+                return;
+            }
+            log.success('Email encontrado');
+            return user;
+        }
+        catch (error) {
+            log.error(`Erro ao logar: ${error}`);
+            throw error;
+        }
+    }
+
 }
 
 export default AgenteModel;

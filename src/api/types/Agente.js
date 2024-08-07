@@ -3,7 +3,7 @@ import { type } from "os";
 
 const agenteSchema = new mongoose.Schema({  
     id: mongoose.Schema.Types.ObjectId,
-    name:{
+    nome:{
         type: String,
         required: true,
     },
@@ -16,11 +16,15 @@ const agenteSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    password:{
+    senha:{
         type: String,
         required: true,
     },
-    role:{
+    telefone:{
+        type: String,
+        required: true,
+    },
+    administrador:{
         type: Boolean,
         required: true,
     },

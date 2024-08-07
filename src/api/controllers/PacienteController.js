@@ -84,6 +84,7 @@ class PacienteController {
             }
 
             await this.pacienteModel.updatePaciente(id,paciente);
+
             res.send({
                 message: 'Paciente updated',
                 id: paciente._id,
@@ -103,8 +104,7 @@ class PacienteController {
                 console.log("Id is empty");
                 res.status(500).send({message: 'Id is empty'});
             }
-
-            const result = await this.pacienteModel.readPaciente(id);
+            const result = await this.PacienteModel.readPaciente(id);
             res.send(result);
 
         }catch(error){
